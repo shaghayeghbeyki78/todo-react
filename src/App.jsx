@@ -7,13 +7,13 @@ const STORAGE_KEY = 'tasks';
 function App() {
   const [tasks, setTasks] = useState([]);
 
+  // ⏳ Load tasks from localStorage on mount
   useEffect(() => {
     const savedTasks = localStorage.getItem(STORAGE_KEY);
     if (savedTasks) {
       setTasks(JSON.parse(savedTasks));
     }
   }, []);
-
   const addTask = (task) => {
     setTasks(prev => {
       const updated = [...prev, task];
@@ -23,13 +23,17 @@ function App() {
   };
 
   const removeTask = (taskToRemove) => {
-    setTasks(tasks.filter(task => task.id !== taskToRemove.id));
+    const updatedTasks = tasks.filter(task => task.id !== taskToRemove.id);
+    setTasks(updatedTasks);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks)); // 🔁 FIX: update localStorage too
   };
 
   const updateTask = (updatedTask) => {
-    setTasks(tasks.map(task =>
+    const updatedTasks = tasks.map(task =>
       task.id === updatedTask.id ? updatedTask : task
-    ));
+    );
+    setTasks(updatedTasks);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTasks));
   };
 
   const clearAll = () => {
